@@ -1,0 +1,98 @@
+package com.nhantran.todoapp.service.impl;
+
+import com.nhantran.todoapp.dto.TaskDto;
+import com.nhantran.todoapp.entity.Task;
+import com.nhantran.todoapp.exception.TaskNotFoundException;
+import com.nhantran.todoapp.repository.TaskRepo;
+import com.nhantran.todoapp.service.TaskService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Slf4j
+public class TaskServiceImpl implements TaskService {
+    @Autowired
+    private TaskRepo taskRepo;
+
+    private TaskService taskService;
+
+    @Override
+    public TaskDto createTask(TaskDto task) {
+        return TaskDto.convertToTaskDto(
+                taskRepo.save(
+                        TaskDto.convertToTask(task)
+                )
+        );
+    }
+
+    @Override
+    public TaskDto updateTask(TaskDto taskDto, Integer id) {
+        Task task = taskRepo.findById(id).orElseThrow(() -> new TaskNotFoundException("Task with id = " + id + " not be found"));
+        task.setName(taskDto.getName());
+        task.setModifiedTime(ZonedDateTime.now());
+        return TaskDto.convertToTaskDto(taskRepo.save(task));
+    }
+
+
+    @Override
+    public List<TaskDto> getAllTasks() {
+        return taskRepo.findAll()
+                .stream()
+                .map(TaskDto::convertToTaskDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public TaskDto getTaskById(Integer id) {
+        if (id == null) {
+            log.error("Task id is null");
+            return null;
+        }
+        return taskRepo.findById(id).map(TaskDto::convertToTaskDto)
+                .orElseThrow(() -> new TaskNotFoundException("Task with id = " + id + " not be found"));
+    }
+
+    @Override
+    public List<TaskDto> getAllTasksByUserId(Integer userId) {
+        return taskRepo.findTaskByUserId(userId)
+                .stream()
+                .map(TaskDto::convertToTaskDto)
+                .collect(Collectors.toList());
+    }
+
+//    @Override
+//    public List<TaskDto> searchTask(String keyword) {
+//        List<TaskDto> allTasks = taskRepo.findAll();
+//        return allTasks.stream()
+//                .filter(task -> task.getName().contains(keyword))
+//                .collect(Collectors.toList());
+//    }
+
+    @Override
+    public void markTaskIsDone(Integer id) {
+        if (id == null) {
+            log.error("Task id is null");
+            return;
+        }
+        Task task = taskRepo.findById(id).orElseThrow(() -> new TaskNotFoundException("Task with id = " + id + " not be found"));
+        task.setDone(true);
+        task.setCompletedTime(ZonedDateTime.now());
+        TaskDto.convertToTaskDto(taskRepo.save(task));
+    }
+
+
+    @Override
+    public void deleteTaskById(Integer id) {
+        if (id == null) {
+            log.error("Task id is null");
+            return;
+        }
+        taskRepo.deleteById(id);
+    }
+
+}
