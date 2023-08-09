@@ -2,8 +2,11 @@ package com.nhantran.todoapp.service.impl;
 
 import com.nhantran.todoapp.dto.TaskDto;
 import com.nhantran.todoapp.entity.Task;
+import com.nhantran.todoapp.entity.Users;
 import com.nhantran.todoapp.exception.TaskNotFoundException;
+import com.nhantran.todoapp.exception.UserNotFoundException;
 import com.nhantran.todoapp.repository.TaskRepo;
+import com.nhantran.todoapp.repository.UserRepo;
 import com.nhantran.todoapp.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +20,24 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TaskServiceImpl implements TaskService {
     @Autowired
+    private UserRepo userRepo;
+    @Autowired
     private TaskRepo taskRepo;
 
-    private TaskService taskService;
 
     @Override
-    public TaskDto createTask(TaskDto task) {
-        return TaskDto.convertToTaskDto(
-                taskRepo.save(
-                        TaskDto.convertToTask(task)
-                )
-        );
+    public TaskDto createTask(TaskDto taskDto, Integer id) {
+        Task task = new Task();
+        task.setName((taskDto.getName()));
+        task.setCreatedTime(ZonedDateTime.now());
+        task.setModifiedTime(ZonedDateTime.now());
+        task.setDone(false);
+        task.setCompletedTime(null);
+
+        Users userId = userRepo.findById(id).orElseThrow(()-> new UserNotFoundException("userId not found"));
+        task.setUser(userId);
+
+        return TaskDto.convertToTaskDto(taskRepo.save(task));
     }
 
     @Override
@@ -49,29 +59,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto getTaskById(Integer id) {
-        if (id == null) {
-            log.error("Task id is null");
-            return null;
-        }
-        return taskRepo.findById(id).map(TaskDto::convertToTaskDto)
+        return taskRepo.findById(id)
+                .map(TaskDto::convertToTaskDto)
                 .orElseThrow(() -> new TaskNotFoundException("Task with id = " + id + " not be found"));
     }
 
     @Override
-    public List<TaskDto> getAllTasksByUserId(Integer userId) {
-        return taskRepo.findTaskByUserId(userId)
-                .stream()
+    public List<TaskDto> getAllTasksByUserId(Integer id) {
+        List<Task> tasksList = taskRepo.findTasksByUserId(id);
+        return tasksList.stream()
                 .map(TaskDto::convertToTaskDto)
                 .collect(Collectors.toList());
     }
-
-//    @Override
-//    public List<TaskDto> searchTask(String keyword) {
-//        List<TaskDto> allTasks = taskRepo.findAll();
-//        return allTasks.stream()
-//                .filter(task -> task.getName().contains(keyword))
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public void markTaskIsDone(Integer id) {
@@ -82,6 +81,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepo.findById(id).orElseThrow(() -> new TaskNotFoundException("Task with id = " + id + " not be found"));
         task.setDone(true);
         task.setCompletedTime(ZonedDateTime.now());
+        task.setModifiedTime(ZonedDateTime.now());
         TaskDto.convertToTaskDto(taskRepo.save(task));
     }
 

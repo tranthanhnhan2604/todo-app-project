@@ -2,7 +2,10 @@ package com.nhantran.todoapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhantran.todoapp.entity.Todo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
 
@@ -15,24 +18,19 @@ public class TodoDto {
     private Integer id;
 
     private String title;
-
     @JsonIgnore
     private ZonedDateTime createdTime;
     @JsonIgnore
     private ZonedDateTime modifiedTime;
-    @JsonIgnore
-    private TaskDto task;
+    private Integer taskId;
 
     public static Todo convertToTodo(TodoDto todoDto){
 
         final Todo todo = new Todo();
-
         todo.setId(todoDto.getId());
         todo.setTitle(todoDto.getTitle());
         todo.setCreatedTime(todoDto.getCreatedTime());
         todo.setModifiedTime(todoDto.getModifiedTime());
-        todo.setTask(TaskDto.convertToTask(todoDto.getTask()));
-
         return todo;
     }
 
@@ -43,6 +41,7 @@ public class TodoDto {
                 .title(todo.getTitle())
                 .createdTime(todo.getCreatedTime())
                 .modifiedTime(todo.getModifiedTime())
+                .taskId(todo.getTask().getId())
                 .build();
     }
 

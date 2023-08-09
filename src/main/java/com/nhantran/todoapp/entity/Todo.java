@@ -21,6 +21,6 @@ public class Todo {
     private ZonedDateTime modifiedTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "taskId")
+    @JoinColumn(name = "task_id")
     private Task task;
 }

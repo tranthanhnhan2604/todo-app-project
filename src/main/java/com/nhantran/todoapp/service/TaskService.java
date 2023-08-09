@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TaskService {
 
-    TaskDto createTask(TaskDto task);
+    TaskDto createTask(TaskDto task, Integer id);
 
     TaskDto updateTask(TaskDto task, Integer id);
 
@@ -14,7 +14,7 @@ public interface TaskService {
 
     TaskDto getTaskById(Integer id);
 
-    List<TaskDto> getAllTasksByUserId(Integer userId);
+    List<TaskDto> getAllTasksByUserId(Integer id);
 
 //    List<TaskDto> searchTask(String keyword);
 

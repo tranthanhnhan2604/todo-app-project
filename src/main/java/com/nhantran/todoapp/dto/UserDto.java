@@ -1,14 +1,14 @@
 package com.nhantran.todoapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nhantran.todoapp.entity.User;
+import com.nhantran.todoapp.entity.Role;
+import com.nhantran.todoapp.entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,53 +16,45 @@ import java.util.stream.Collectors;
 @Builder
 public class UserDto {
     private Integer id;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
-    private String userName;
-
-    private String password;
-
     @JsonIgnore
-    private List<TaskDto> task;
+    private String password;
+    private Set<Role> role;
 
-    public static User convertToUser(UserDto userDto) {
-        final User user = new User();
+    public static Users convertToUser(UserDto userDto) {
+        final Users users = new Users();
 
-        user.setId(userDto.getId());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setUserName(userDto.getUserName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setTask(
-                userDto.getTask() != null ? userDto.getTask()
-                        .stream()
-                        .map(TaskDto::convertToTask)
-                        .collect(Collectors.toList()) : null
-        );
+        users.setId(userDto.getId());
+        users.setFirstName(userDto.getFirstName());
+        users.setLastName(userDto.getLastName());
+        users.setEmail(userDto.getEmail());
+        users.setPassword(userDto.getPassword());
+//        users.setTask(
+//                userDto.getTask() != null ? userDto.getTask()
+//                        .stream()
+//                        .map(TaskDto::convertToTask)
+//                        .collect(Collectors.toList()) : null
+//        );
 
-        return user;
+        return users;
     }
 
-    public static UserDto convertToUserDto(User user){
+    public static UserDto convertToUserDto(Users users){
         return UserDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .userName(user.getUserName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .task(
-                        user.getTask() != null ? user.getTask()
-                                .stream()
-                                .map(TaskDto::convertToTaskDto)
-                                .collect(Collectors.toList()) : null
-                )
+                .id(users.getId())
+                .firstName(users.getFirstName())
+                .lastName(users.getLastName())
+                .email(users.getEmail())
+                .password(users.getPassword())
+                .role(users.getRole())
+//                .task(
+//                        users.getTask() != null ? users.getTask()
+//                                .stream()
+//                                .map(TaskDto::convertToTaskDto)
+//                                .collect(Collectors.toList()) : null
+//                )
                 .build();
     }
 }

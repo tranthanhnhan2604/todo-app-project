@@ -1,11 +1,7 @@
 package com.nhantran.todoapp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -15,6 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+@Getter
+@Setter
 public class Task {
 
     @Id
@@ -31,10 +29,9 @@ public class Task {
 
     private ZonedDateTime completedTime;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Users user;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     private List<Todo> todoList;

@@ -1,6 +1,8 @@
 package com.nhantran.todoapp.controller;
 
+import com.nhantran.todoapp.dto.TaskDto;
 import com.nhantran.todoapp.dto.UserDto;
+import com.nhantran.todoapp.service.TaskService;
 import com.nhantran.todoapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,32 +17,38 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private TaskService taskService;
 
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-    }
-
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole()")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto user, @PathVariable Integer id) {
         return new ResponseEntity<>(userService.updateUser(user,id), HttpStatus.OK);
     }
-    @GetMapping("/all")
+
+    @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUser(@PathVariable Integer id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/tasks")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<TaskDto>> getAllTasksByUserId(@PathVariable Integer id){
+        return new ResponseEntity<>(taskService.getAllTasksByUserId(id), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity deleteUser(@PathVariable Integer id) {
         userService.deleteUserById(id);
         return new ResponseEntity(HttpStatus.OK);
     }
+
 }

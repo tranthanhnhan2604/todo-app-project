@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TodoService {
 
-    TodoDto createTodo(TodoDto todoDto);
+    TodoDto createTodo(Integer taskId, TodoDto todoDto);
 
     TodoDto updateTodo(TodoDto todoDto, Integer id);
 
