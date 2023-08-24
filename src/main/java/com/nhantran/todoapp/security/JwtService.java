@@ -17,9 +17,6 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-//    @Value("${com.nhantran.todoapp.security.secret-key}")
-//    private String SECRET_KEY;
-
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     @Value("${com.nhantran.todoapp.security.expiration}")

@@ -23,7 +23,6 @@ public class TaskDto {
     private ZonedDateTime createdTime;
     @JsonIgnore
     private ZonedDateTime modifiedTime;
-    @JsonIgnore
     private boolean done;
     @JsonIgnore
     private ZonedDateTime completedTime;

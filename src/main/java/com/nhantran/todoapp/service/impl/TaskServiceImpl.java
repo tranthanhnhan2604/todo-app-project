@@ -82,6 +82,7 @@ public class TaskServiceImpl implements TaskService {
         task.setDone(true);
         task.setCompletedTime(ZonedDateTime.now());
         task.setModifiedTime(ZonedDateTime.now());
+
         TaskDto.convertToTaskDto(taskRepo.save(task));
     }
 

@@ -8,16 +8,16 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException ex, WebRequest rq){
-        return new ErrorResponse(ErrorStatus.USER_NOT_FOUND, ex.getMessage());
+        return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(TaskNotFoundException.class)
     public ErrorResponse handleTaskNotFoundException(TaskNotFoundException ex, WebRequest rq){
-        return new ErrorResponse(ErrorStatus.TASK_NOT_FOUND, ex.getMessage());
+        return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(TodoNotFoundException.class)
     public ErrorResponse handleTodoNotFoundException(TodoNotFoundException ex, WebRequest rq){
-        return new ErrorResponse(ErrorStatus.TODO_NOT_FOUND, ex.getMessage());
+        return new ErrorResponse(ex.getMessage());
     }
 }
